@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Decrypt and explore UniFi .unf and .unifi backup files entirely in your browser — no upload, no server.">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#f4f1ea">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f4f1ea'/%3E%3Cpath d='M16 6l7 8h-4v12h-6V14H9z' fill='%235c6e44'/%3E%3C/svg%3E">
     <title>UniFi Backup Explorer</title>
     <script>
         (function () {
+            var VALID_THEMES = ['paper', 'parchment', 'cream', 'ivory', 'kraft', 'charcoal', 'night'];
             var theme = localStorage.getItem('ube-theme');
-            if (theme !== 'light' && theme !== 'dark') theme = 'dark';
+            if (VALID_THEMES.indexOf(theme) === -1) {
+                theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'paper';
+            }
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
@@ -21,72 +28,269 @@
             --sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
         }
 
-        /* Dark is the default */
-        :root,
-        [data-theme="dark"] {
-            color-scheme: dark;
-            --bg-1: #1a2d42;
-            --bg-2: #0b1520;
-            --accent: #5b8fd9;
-            --accent-strong: #8bb4ea;
-            --accent-soft: #1a2838;
-            --accent-muted: #243548;
-            --surface: #141c28;
-            --surface-2: #1c2736;
-            --text: #e8eef6;
-            --text-muted: #94a3b8;
-            --border: #2a3a4f;
-            --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-            --panel-border: rgba(255, 255, 255, 0.08);
-            --glow-1: rgba(80, 140, 220, 0.22);
-            --glow-2: rgba(40, 90, 150, 0.18);
-            --drop-drag: #2a4058;
-            --code-bg: #243447;
-            --error-bg: #3b1515;
-            --error-border: #7f1d1d;
-            --error-text: #fca5a5;
-            --badge-success-bg: #14532d;
-            --badge-success-text: #86efac;
-            --badge-info-bg: #0c4a6e;
-            --badge-info-text: #7dd3fc;
-            --badge-warning-bg: #78350f;
-            --badge-warning-text: #fcd34d;
-            --badge-muted-bg: #334155;
-            --badge-muted-text: #cbd5e1;
-            --btn-shadow: rgba(91, 143, 217, 0.28);
+        /*
+           Paper-matte theme family.
+           Base palette shared by every variation; each [data-theme="…"] block
+           overrides the background/surface/accent hues so all components pick
+           up the active variation automatically.
+        */
+        :root {
+            color-scheme: light;
+            --bg-1: #f4f1ea;
+            --bg-2: #e8e2d5;
+            --accent: #7a8b5f;
+            --accent-strong: #5c6e44;
+            --accent-soft: #ede9dc;
+            --accent-muted: #e0dbc9;
+            --surface: #faf8f2;
+            --surface-2: #f0ecdf;
+            --text: #2f2a20;
+            --text-muted: #6e6653;
+            --border: #d8d2c0;
+            --shadow: 0 12px 40px rgba(87, 74, 44, 0.16);
+            --panel-border: rgba(87, 74, 44, 0.18);
+            --glow-1: rgba(122, 139, 95, 0.16);
+            --glow-2: rgba(160, 140, 100, 0.12);
+            --drop-drag: #e6e0cf;
+            --code-bg: #eee9da;
+            --error-bg: #f6e4e1;
+            --error-border: #dcbdb6;
+            --error-text: #8c3a2e;
+            --badge-success-bg: #e3ead8;
+            --badge-success-text: #4f6136;
+            --badge-info-bg: #dde5e4;
+            --badge-info-text: #3d5a5c;
+            --badge-warning-bg: #f1e6cd;
+            --badge-warning-text: #7a5b1e;
+            --badge-muted-bg: #e7e2d3;
+            --badge-muted-text: #6e6653;
+            --btn-shadow: rgba(92, 110, 68, 0.25);
+            --overlay-scrim: rgba(47, 42, 32, 0.45);
+            --json-bg: #f5f2e9;
+            --json-border: #dcd6c4;
+            --json-text: #3d382c;
+            --json-key: #1f5f8b;
+            --json-string: #3d6b2f;
+            --json-number: #a3541b;
+            --json-boolean: #7b4ba5;
+            --json-null: #8a8271;
+            --json-punct: #7d7561;
+            --prop-comment: #8a8271;
+            --code-inset: rgba(255, 255, 255, 0.5);
         }
 
-        [data-theme="light"] {
-            color-scheme: light;
-            --bg-1: #3d5a80;
-            --bg-2: #1b3a4b;
-            --accent: #4a7fd4;
-            --accent-strong: #2f5fad;
-            --accent-soft: #e8f0fb;
-            --accent-muted: #d6e4f7;
-            --surface: #ffffff;
-            --surface-2: #f4f7fb;
-            --text: #1a2332;
-            --text-muted: #5a6a7e;
-            --border: #dce5f0;
-            --shadow: 0 12px 40px rgba(27, 58, 75, 0.18);
-            --panel-border: rgba(255, 255, 255, 0.4);
-            --glow-1: rgba(120, 180, 255, 0.35);
-            --glow-2: rgba(70, 140, 200, 0.28);
-            --drop-drag: #cfe0f5;
-            --code-bg: #e6eef8;
-            --error-bg: #fef2f2;
-            --error-border: #fecaca;
-            --error-text: #b91c1c;
-            --badge-success-bg: #dcfce7;
-            --badge-success-text: #166534;
-            --badge-info-bg: #e0f2fe;
-            --badge-info-text: #075985;
-            --badge-warning-bg: #fef3c7;
-            --badge-warning-text: #92400e;
-            --badge-muted-bg: #e8eef5;
-            --badge-muted-text: #475569;
-            --btn-shadow: rgba(47, 95, 173, 0.28);
+        /* Paper — classic warm-white matte stock (default) */
+        [data-theme="paper"],
+        [data-theme="parchment"],
+        [data-theme="cream"],
+        [data-theme="ivory"],
+        [data-theme="kraft"],
+        [data-theme="charcoal"],
+        [data-theme="night"] {
+            background: transparent;
+        }
+
+        [data-theme="parchment"] {
+            --bg-1: #f0e7d3;
+            --bg-2: #e2d4b8;
+            --accent: #9c7c4a;
+            --accent-strong: #7a5f36;
+            --accent-soft: #e9dcc2;
+            --accent-muted: #ddcbab;
+            --surface: #f7f0de;
+            --surface-2: #ece1c8;
+            --text: #3a3020;
+            --text-muted: #75664a;
+            --border: #d6c6a5;
+            --panel-border: rgba(90, 73, 40, 0.22);
+            --glow-1: rgba(156, 124, 74, 0.18);
+            --glow-2: rgba(184, 148, 92, 0.12);
+            --drop-drag: #e4d6ba;
+            --code-bg: #e9dec5;
+            --badge-info-bg: #dfe4d9;
+            --badge-info-text: #48573a;
+            --json-bg: #f4ecd9;
+            --json-border: #d9c9a9;
+            --json-text: #3f3522;
+            --json-key: #1e5c7a;
+            --json-string: #47632a;
+            --json-number: #a15c1c;
+        }
+
+        [data-theme="cream"] {
+            --bg-1: #f6f0e2;
+            --bg-2: #eadfc8;
+            --accent: #b98a4e;
+            --accent-strong: #8f6836;
+            --accent-soft: #efe4cd;
+            --accent-muted: #e5d6b9;
+            --surface: #fbf6ea;
+            --surface-2: #f1e9d6;
+            --text: #35291a;
+            --text-muted: #71624a;
+            --border: #ded0b5;
+            --panel-border: rgba(80, 61, 31, 0.2);
+            --glow-1: rgba(185, 138, 78, 0.15);
+            --glow-2: rgba(150, 170, 200, 0.14);
+            --drop-drag: #ecdfc6;
+            --code-bg: #eee3ca;
+            --badge-info-bg: #dde6e8;
+            --badge-info-text: #365b66;
+            --json-bg: #f8f2e4;
+            --json-border: #ddd0b2;
+            --json-text: #3a2f1e;
+            --json-key: #26607f;
+            --json-string: #3f6b30;
+            --json-number: #a4551d;
+        }
+
+        [data-theme="ivory"] {
+            --bg-1: #f7f4ec;
+            --bg-2: #ebe6d9;
+            --accent: #6b7f8e;
+            --accent-strong: #4d6272;
+            --accent-soft: #eef0ec;
+            --accent-muted: #e2e6e3;
+            --surface: #fcfbf6;
+            --surface-2: #f2f0e8;
+            --text: #2c2e26;
+            --text-muted: #686d60;
+            --border: #dad6c9;
+            --panel-border: rgba(60, 64, 54, 0.16);
+            --glow-1: rgba(107, 127, 142, 0.16);
+            --glow-2: rgba(150, 145, 120, 0.1);
+            --drop-drag: #e9e7dc;
+            --code-bg: #edeadf;
+            --badge-success-bg: #e0e8d8;
+            --badge-success-text: #44582e;
+            --json-bg: #f7f5ee;
+            --json-border: #dcd8ca;
+            --json-text: #33352c;
+            --json-key: #265d78;
+            --json-string: #3c6b34;
+            --json-number: #9c5518;
+        }
+
+        [data-theme="kraft"] {
+            --bg-1: #e3d5b8;
+            --bg-2: #d3c19c;
+            --accent: #8a6f3e;
+            --accent-strong: #6a5329;
+            --accent-soft: #dcd0b1;
+            --accent-muted: #d0c1a0;
+            --surface: #ece0c6;
+            --surface-2: #e0d2b2;
+            --text: #3a2f1c;
+            --text-muted: #6f6142;
+            --border: #c7b591;
+            --shadow: 0 12px 40px rgba(76, 61, 31, 0.22);
+            --panel-border: rgba(76, 61, 31, 0.26);
+            --glow-1: rgba(138, 111, 62, 0.2);
+            --glow-2: rgba(170, 140, 90, 0.14);
+            --drop-drag: #d8c8a4;
+            --code-bg: #ded0af;
+            --error-bg: #efdcd8;
+            --error-border: #d4b3ac;
+            --error-text: #7d3a2c;
+            --badge-muted-bg: #ddd0b0;
+            --badge-muted-text: #5f5136;
+            --json-bg: #efe3c9;
+            --json-border: #cbb890;
+            --json-text: #3a2f1c;
+            --json-key: #27506b;
+            --json-string: #41612a;
+            --json-number: #95501a;
+            --json-punct: #6f6142;
+        }
+
+        [data-theme="charcoal"] {
+            color-scheme: dark;
+            --bg-1: #33322e;
+            --bg-2: #232420;
+            --accent: #a89c82;
+            --accent-strong: #c4b896;
+            --accent-soft: #3a3933;
+            --accent-muted: #46453d;
+            --surface: #2e2d29;
+            --surface-2: #3a3833;
+            --text: #e9e5d8;
+            --text-muted: #a49d8b;
+            --border: #4c4a42;
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            --panel-border: rgba(233, 229, 216, 0.08);
+            --glow-1: rgba(168, 156, 130, 0.12);
+            --glow-2: rgba(120, 112, 90, 0.1);
+            --drop-drag: #43423a;
+            --code-bg: #403f37;
+            --error-bg: #4a3230;
+            --error-border: #6e4a45;
+            --error-text: #f0c2ba;
+            --badge-success-bg: #3d4636;
+            --badge-success-text: #b9c9a4;
+            --badge-info-bg: #354349;
+            --badge-info-text: #a8c5cd;
+            --badge-warning-bg: #4d4230;
+            --badge-warning-text: #e6cf9d;
+            --badge-muted-bg: #45443c;
+            --badge-muted-text: #c9c3b2;
+            --btn-shadow: rgba(196, 184, 150, 0.22);
+            --overlay-scrim: rgba(20, 20, 18, 0.6);
+            --json-bg: #26251f;
+            --json-border: #43423a;
+            --json-text: #ded9c8;
+            --json-key: #9fc3e0;
+            --json-string: #b5c99a;
+            --json-number: #e0b070;
+            --json-boolean: #c8aee0;
+            --json-null: #a49d8b;
+            --json-punct: #948d7a;
+            --prop-comment: #8a8474;
+            --code-inset: rgba(255, 255, 255, 0.03);
+        }
+
+        [data-theme="night"] {
+            color-scheme: dark;
+            --bg-1: #262a2e;
+            --bg-2: #17191c;
+            --accent: #8fa6b5;
+            --accent-strong: #aec4d2;
+            --accent-soft: #2c3338;
+            --accent-muted: #37414a;
+            --surface: #22262a;
+            --surface-2: #2b3035;
+            --text: #e6e9e3;
+            --text-muted: #9aa39c;
+            --border: #3c4348;
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+            --panel-border: rgba(230, 233, 227, 0.08);
+            --glow-1: rgba(143, 166, 181, 0.14);
+            --glow-2: rgba(90, 110, 125, 0.1);
+            --drop-drag: #38424a;
+            --code-bg: #31373d;
+            --error-bg: #42302e;
+            --error-border: #6b4a46;
+            --error-text: #efc0b8;
+            --badge-success-bg: #364434;
+            --badge-success-text: #b0c6a8;
+            --badge-info-bg: #323f48;
+            --badge-info-text: #a4c2d4;
+            --badge-warning-bg: #453c2c;
+            --badge-warning-text: #e2cb96;
+            --badge-muted-bg: #3a4046;
+            --badge-muted-text: #c2c8c0;
+            --btn-shadow: rgba(174, 196, 210, 0.22);
+            --overlay-scrim: rgba(12, 14, 16, 0.6);
+            --json-bg: #1c2023;
+            --json-border: #3c4348;
+            --json-text: #d9ddd4;
+            --json-key: #9cc6e8;
+            --json-string: #acc9a2;
+            --json-number: #dcb472;
+            --json-boolean: #c4abe4;
+            --json-null: #9aa39c;
+            --json-punct: #8b938c;
+            --prop-comment: #7d857e;
+            --code-inset: rgba(255, 255, 255, 0.03);
         }
 
         * {
@@ -115,41 +319,85 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 42px;
+            gap: 8px;
             height: 42px;
+            padding: 0 12px;
             border-radius: 10px;
             border: 1px solid var(--panel-border);
-            background: rgba(20, 28, 40, 0.55);
-            color: #e8eef6;
+            background: var(--surface);
+            color: var(--text);
             cursor: pointer;
-            backdrop-filter: blur(8px);
+            font-family: var(--sans);
+            font-size: 0.82rem;
+            font-weight: 600;
+            box-shadow: var(--shadow);
             transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        [data-theme="light"] .theme-toggle {
-            background: rgba(255, 255, 255, 0.22);
-            color: #ffffff;
         }
 
         .theme-toggle:hover {
             transform: translateY(-1px);
-            background: rgba(20, 28, 40, 0.75);
-        }
-
-        [data-theme="light"] .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.32);
+            border-color: var(--accent);
         }
 
         .theme-toggle svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
         }
 
-        .theme-toggle .icon-sun { display: none; }
-        .theme-toggle .icon-moon { display: block; }
+        .theme-popover {
+            position: fixed;
+            top: 64px;
+            right: 16px;
+            z-index: 60;
+            background: var(--surface);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 10px;
+            display: none;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px;
+            width: 264px;
+        }
 
-        [data-theme="light"] .theme-toggle .icon-sun { display: block; }
-        [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+        .theme-popover.open {
+            display: grid;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-family: var(--sans);
+            font-size: 0.82rem;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .theme-option:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent-strong);
+            background: var(--accent-soft);
+            font-weight: 600;
+        }
+
+        .theme-swatch {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            border: 1px solid var(--panel-border);
+            flex-shrink: 0;
+        }
         
         .container {
             max-width: 1400px;
@@ -158,7 +406,7 @@
         
         .header {
             text-align: center;
-            color: white;
+            color: var(--text);
             margin-bottom: 28px;
         }
         
@@ -167,7 +415,6 @@
             font-weight: 700;
             letter-spacing: -0.02em;
             margin-bottom: 8px;
-            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
         }
         
         .header p {
@@ -376,8 +623,8 @@
         }
         
         .json-viewer {
-            background: #0f1724;
-            border: 1px solid #243147;
+            background: var(--json-bg);
+            border: 1px solid var(--json-border);
             border-radius: 10px;
             padding: 18px 20px;
             max-height: min(60vh, 520px);
@@ -385,8 +632,8 @@
             font-family: var(--mono);
             font-size: 0.84rem;
             line-height: 1.55;
-            color: #d7e0ec;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            color: var(--json-text);
+            box-shadow: inset 0 1px 0 var(--code-inset);
         }
         
         .json-viewer pre {
@@ -553,13 +800,13 @@
             }
         }
 
-        .json-viewer .json-key { color: #7dd3fc; }
-        .json-viewer .json-string { color: #86efac; }
-        .json-viewer .json-number { color: #fcd34d; }
-        .json-viewer .json-boolean { color: #c4b5fd; }
-        .json-viewer .json-null { color: #94a3b8; font-style: italic; }
-        .json-viewer .json-punctuation { color: #8ba0b8; }
-        .json-viewer .prop-comment { color: #64748b; font-style: italic; }
+        .json-viewer .json-key { color: var(--json-key); }
+        .json-viewer .json-string { color: var(--json-string); }
+        .json-viewer .json-number { color: var(--json-number); }
+        .json-viewer .json-boolean { color: var(--json-boolean); }
+        .json-viewer .json-null { color: var(--json-null); font-style: italic; }
+        .json-viewer .json-punctuation { color: var(--json-punct); }
+        .json-viewer .prop-comment { color: var(--prop-comment); font-style: italic; }
         
         .error {
             background: var(--error-bg);
@@ -600,7 +847,7 @@
         
         .reset-btn {
             background: var(--accent);
-            color: white;
+            color: var(--surface);
             border: 1px solid transparent;
             padding: 12px 22px;
             border-radius: 8px;
@@ -646,6 +893,17 @@
             box-shadow: none;
         }
         
+        .file-filter {
+            margin: 4px 0 12px;
+            max-width: 320px;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         .collection-table {
             width: 100%;
             border-collapse: separate;
@@ -743,7 +1001,7 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
-            background: rgba(15, 23, 36, 0.55);
+            background: var(--overlay-scrim);
             backdrop-filter: blur(4px);
             pointer-events: none;
         }
@@ -779,7 +1037,7 @@
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 36, 0.72);
+            background: var(--overlay-scrim);
             backdrop-filter: blur(4px);
             z-index: 1000;
             display: flex;
@@ -837,18 +1095,23 @@
             .drop-zone { padding: 40px 16px; }
             .collection-table th:nth-child(2),
             .collection-table td:nth-child(2) { display: none; }
+            .theme-popover {
+                right: 12px;
+                left: 12px;
+                width: auto;
+            }
+            .theme-toggle { right: 12px; }
         }
     </style>
 </head>
 <body>
-    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Toggle theme">
-        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Choose theme" aria-expanded="false" aria-haspopup="true" title="Choose theme">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2H9m8-9a2 2 0 012-2 2 2 0 012 2v2a2 2 0 01-2 2" />
         </svg>
-        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
+        <span id="themeLabel">Theme</span>
     </button>
+    <div class="theme-popover" id="themePopover" role="menu" aria-label="Paper theme variations"></div>
     <div class="container">
         <div class="header">
             <h1>UniFi Backup Explorer</h1>
@@ -903,280 +1166,11 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script>
-
-        /* 
-        bzip2.js - a small bzip2 decompression implementation
-        
-        Copyright 2011 by antimatter15 (antimatter15@gmail.com)
-        
-        Based on micro-bunzip by Rob Landley (rob@landley.net).
-
-        Copyright (c) 2011 by antimatter15 (antimatter15@gmail.com).
-
-        Permission is hereby granted, free of charge, to any person obtaining a
-        copy of this software and associated documentation files (the "Software"),
-        to deal in the Software without restriction, including without limitation
-        the rights to use, copy, modify, merge, publish, distribute, sublicense,
-        and/or sell copies of the Software, and to permit persons to whom the
-        Software is furnished to do so, subject to the following conditions:
-        
-        The above copyright notice and this permission notice shall be included
-        in all copies or substantial portions of the Software.
-        
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-        IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-        DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-        TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
-        THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-        */
-
-        var bzip2 = {};
-
-        bzip2.array = function(bytes){
-        var bit = 0, byte = 0;
-        var BITMASK = [0, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF ];
-        return function(n){
-            var result = 0;
-            while(n > 0){
-            var left = 8 - bit;
-            if(n >= left){
-                result <<= left;
-                result |= (BITMASK[left] & bytes[byte++]);
-                bit = 0;
-                n -= left;
-            }else{
-                result <<= n;
-                result |= ((bytes[byte] & (BITMASK[n] << (8 - n - bit))) >> (8 - n - bit));
-                bit += n;
-                n = 0;
-            }
-            }
-            return result
-        }
-        }
-
-        bzip2.simple = function(bits){
-        var size = bzip2.header(bits);
-        var all = '', chunk = '';
-        do{
-            all += chunk;
-            chunk = bzip2.decompress(bits, size);
-        }while(chunk != -1);
-        return all;
-        }
-
-        bzip2.header = function(bits){
-        if(bits(8*3) != 4348520) throw "No magic number found";
-        var i = bits(8) - 48;
-        if(i < 1 || i > 9) throw "Not a BZIP archive";
-        return i;
-        };
-
-
-        //takes a function for reading the block data (starting with 0x314159265359)
-        //a block size (0-9) (optional, defaults to 9)
-        //a length at which to stop decompressing and return the output
-        bzip2.decompress = function(bits, size, len){
-        var MAX_HUFCODE_BITS = 20;
-        var MAX_SYMBOLS = 258;
-        var SYMBOL_RUNA = 0;
-        var SYMBOL_RUNB = 1;
-        var GROUP_SIZE = 50;
-        
-        var bufsize = 100000 * size;
-        for(var h = '', i = 0; i < 6; i++) h += bits(8).toString(16);
-        if(h == "177245385090") return -1; //last block
-        if(h != "314159265359") throw "eek not valid bzip data";
-        bits(32); //ignore CRC codes
-        if(bits(1)) throw "unsupported obsolete version";
-        var origPtr = bits(24);
-        if(origPtr > bufsize) throw "Initial position larger than buffer size";
-        var t = bits(16);
-        var symToByte = new Uint8Array(256), 
-            symTotal = 0;
-        for (i = 0; i < 16; i++) {
-            if(t & (1 << (15 - i))) {
-            var k = bits(16);
-            for(j = 0; j < 16; j++){
-                if(k & (1 << (15 - j))){
-                symToByte[symTotal++] = (16 * i) + j;
-                }
-            }
-            }
-        }
-
-        var groupCount = bits(3);
-        if(groupCount < 2 || groupCount > 6) throw "another error";
-        var nSelectors = bits(15);
-        if(nSelectors == 0) throw "meh";
-        var mtfSymbol = []; //TODO: possibly replace JS array with typed arrays
-        for(var i = 0; i < groupCount; i++) mtfSymbol[i] = i;
-        var selectors = new Uint8Array(32768);
-        
-        for(var i = 0; i < nSelectors; i++){
-            for(var j = 0; bits(1); j++) if(j >= groupCount) throw "whoops another error"; 
-            var uc = mtfSymbol[j];
-            mtfSymbol.splice(j, 1); //this is a probably inefficient MTF transform
-            mtfSymbol.splice(0, 0, uc);
-            selectors[i] = uc;
-        }
-        
-        var symCount = symTotal + 2;
-        var groups = [];
-        for(var j = 0; j < groupCount; j++){
-            var length = new Uint8Array(MAX_SYMBOLS), 
-                temp = new Uint8Array(MAX_HUFCODE_BITS+1);
-            t = bits(5); //lengths
-            for(var i = 0; i < symCount; i++){
-            while(true){
-                if (t < 1 || t > MAX_HUFCODE_BITS) throw "I gave up a while ago on writing error messages";
-                if(!bits(1)) break;
-                if(!bits(1)) t++;
-                else t--;
-            }
-            length[i] = t;
-            }
-            var  minLen,  maxLen;
-            minLen = maxLen = length[0];
-            for(var i = 1; i < symCount; i++){
-            if(length[i] > maxLen) maxLen = length[i];
-            else if(length[i] < minLen) minLen = length[i];
-            }
-            var hufGroup;
-            hufGroup = groups[j] = {};
-            hufGroup.permute = new Uint32Array(MAX_SYMBOLS);
-            hufGroup.limit = new Uint32Array(MAX_HUFCODE_BITS + 1);
-            hufGroup.base = new Uint32Array(MAX_HUFCODE_BITS + 1);
-            hufGroup.minLen = minLen;
-            hufGroup.maxLen = maxLen;
-            var base = hufGroup.base.subarray(1);
-            var limit = hufGroup.limit.subarray(1);
-            var pp = 0;
-            for(var i = minLen; i <= maxLen; i++)
-            for(var t = 0; t < symCount; t++) 
-            if(length[t] == i) hufGroup.permute[pp++] = t;
-            for(i = minLen; i <= maxLen; i++) temp[i] = limit[i] = 0;
-            for(i = 0; i < symCount; i++) temp[length[i]]++;
-            pp = t = 0;
-            for(i = minLen; i < maxLen; i++) {
-                pp += temp[i];
-                limit[i] = pp - 1;
-                pp <<= 1;
-                base[i+1] = pp - (t += temp[i]);
-            }
-            limit[maxLen]=pp+temp[maxLen]-1;
-            base[minLen]=0;
-        }
-        var byteCount = new Uint32Array(256);
-        for(var i = 0; i < 256; i++) mtfSymbol[i] = i;
-        var runPos, count, symCount, selector;
-        runPos = count = symCount = selector = 0;
-        var buf = new Uint32Array(bufsize);
-        while(true){
-            if(!(symCount--)){
-            symCount = GROUP_SIZE - 1;
-            if(selector >= nSelectors) throw "meow i'm a kitty, that's an error";
-            hufGroup = groups[selectors[selector++]];
-            base = hufGroup.base.subarray(1);
-            limit = hufGroup.limit.subarray(1);
-            }
-            i = hufGroup.minLen;
-            j = bits(i);
-            while(true){
-            if(i > hufGroup.maxLen) throw "rawr i'm a dinosaur";
-            if(j <= limit[i]) break;
-            i++;
-            j = (j << 1) | bits(1);
-            }
-            j -= base[i];
-            if(j < 0 || j >= MAX_SYMBOLS) throw "moo i'm a cow";
-            var nextSym = hufGroup.permute[j];
-            if (nextSym == SYMBOL_RUNA || nextSym == SYMBOL_RUNB) {
-            if(!runPos){
-                runPos = 1;
-                t = 0;
-            }
-            if(nextSym == SYMBOL_RUNA) t += runPos;
-            else t += 2 * runPos;
-            runPos <<= 1;
-            continue;
-            }
-            if(runPos){
-            runPos = 0;
-            if(count + t >= bufsize) throw "Boom.";
-            uc = symToByte[mtfSymbol[0]];
-            byteCount[uc] += t;
-            while(t--) buf[count++] = uc;
-            }
-            if(nextSym > symTotal) break;
-            if(count >= bufsize) throw "I can't think of anything. Error";
-            i = nextSym -1;
-            uc = mtfSymbol[i];
-            mtfSymbol.splice(i, 1);
-            mtfSymbol.splice(0, 0, uc);
-            uc = symToByte[uc];
-            byteCount[uc]++;
-            buf[count++] = uc;
-        }
-        if(origPtr < 0 || origPtr >= count) throw "I'm a monkey and I'm throwing something at someone, namely you";
-        var j = 0;
-        for(var i = 0; i < 256; i++){
-            k = j + byteCount[i];
-            byteCount[i] = j;
-            j = k;
-        }
-        for(var i = 0; i < count; i++){
-            uc = buf[i] & 0xff;
-            buf[byteCount[uc]] |= (i << 8);
-            byteCount[uc]++;
-        }
-        var pos = 0, current = 0, run = 0;
-        if(count) {
-            pos = buf[origPtr];
-            current = (pos & 0xff);
-            pos >>= 8;
-            run = -1;
-        }
-        count = count;
-        var output = '';
-        var copies, previous, outbyte;
-        if(!len) len = Infinity;
-        while(count){
-            count--;
-            previous = current;
-            pos = buf[pos];
-            current = pos & 0xff;
-            pos >>= 8;
-            if(run++ == 3){
-            copies = current;
-            outbyte = previous;
-            current = -1;
-            }else{
-            copies = 1;
-            outbyte = current;
-            }
-            while(copies--){
-            output += (String.fromCharCode(outbyte));
-            if(!--len) return output;
-            }
-            if(current != previous) run = 0;
-        }
-        return output;
-        }
-
-    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/bson@6.2.0/dist/bson.browser.umd.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bson@7.0.0/lib/bson.bundle.min.js"></script>
 
     <script>
-        console.log('pako library loaded:', typeof pako !== 'undefined' ? 'YES' : 'NO');
-        if (typeof pako !== 'undefined') console.log('pako.inflate available:', typeof pako.inflate);
-        console.log('bson library loaded:', typeof BSON !== 'undefined' ? 'YES' : 'NO');
-        
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const infoSection = document.getElementById('infoSection');
@@ -1185,6 +1179,8 @@
         const dataSection = document.getElementById('dataSection');
         const backupTitle = document.getElementById('backupTitle');
         const themeToggle = document.getElementById('themeToggle');
+        const themePopover = document.getElementById('themePopover');
+        const themeLabel = document.getElementById('themeLabel');
 
         const ICON_DOWNLOAD = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>';
         const ICON_BACKUP_TYPE = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>';
@@ -1315,37 +1311,93 @@
             }
         }
 
+        const THEMES = [
+            { id: 'paper', label: 'Paper', swatch: '#f4f1ea', accent: '#7a8b5f' },
+            { id: 'parchment', label: 'Parchment', swatch: '#f0e7d3', accent: '#9c7c4a' },
+            { id: 'cream', label: 'Cream', swatch: '#f6f0e2', accent: '#b98a4e' },
+            { id: 'ivory', label: 'Ivory', swatch: '#f7f4ec', accent: '#6b7f8e' },
+            { id: 'kraft', label: 'Kraft', swatch: '#e3d5b8', accent: '#8a6f3e' },
+            { id: 'charcoal', label: 'Charcoal', swatch: '#33322e', accent: '#a89c82' },
+            { id: 'night', label: 'Night', swatch: '#262a2e', accent: '#8fa6b5' }
+        ].map(t => ({ ...t, swatchBg: t.swatch }));
+        const DEFAULT_THEME = 'paper';
+
         function getTheme() {
-            return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+            const current = document.documentElement.getAttribute('data-theme');
+            return THEMES.some(t => t.id === current) ? current : DEFAULT_THEME;
         }
 
         function applyTheme(theme) {
-            const next = theme === 'light' ? 'light' : 'dark';
+            const next = THEMES.some(t => t.id === theme) ? theme : DEFAULT_THEME;
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('ube-theme', next);
-            if (themeToggle) {
-                themeToggle.setAttribute(
-                    'aria-label',
-                    next === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
-                );
+            const meta = THEMES.find(t => t.id === next);
+            if (themeLabel) themeLabel.textContent = meta ? meta.label : 'Theme';
+            if (themeToggle) themeToggle.setAttribute('aria-label', `Theme: ${meta ? meta.label : next}`);
+            const themeColor = document.querySelector('meta[name="theme-color"]');
+            if (themeColor && meta) themeColor.setAttribute('content', meta.swatchBg);
+            if (themePopover) {
+                themePopover.querySelectorAll('.theme-option').forEach(btn => {
+                    const active = btn.dataset.theme === next;
+                    btn.classList.toggle('active', active);
+                    btn.setAttribute('aria-checked', active ? 'true' : 'false');
+                });
             }
         }
 
-        if (themeToggle) {
-            applyTheme(getTheme());
-            themeToggle.addEventListener('click', () => {
-                applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
+        function buildThemePicker() {
+            if (!themePopover) return;
+            themePopover.innerHTML = '';
+            THEMES.forEach(({ id, label, swatch, accent }) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'theme-option';
+                btn.dataset.theme = id;
+                btn.setAttribute('role', 'menuitemradio');
+                btn.innerHTML = `<span class="theme-swatch" style="background: linear-gradient(135deg, ${swatch} 55%, ${accent} 55%)" aria-hidden="true"></span><span>${label}</span>`;
+                btn.addEventListener('click', () => {
+                    applyTheme(id);
+                    closeThemePopover();
+                });
+                themePopover.appendChild(btn);
             });
+            applyTheme(getTheme());
         }
+
+        function closeThemePopover() {
+            if (!themePopover) return;
+            themePopover.classList.remove('open');
+            if (themeToggle) themeToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        function toggleThemePopover() {
+            if (!themePopover) return;
+            const open = themePopover.classList.toggle('open');
+            themeToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
+        buildThemePicker();
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleThemePopover);
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!themePopover || !themePopover.classList.contains('open')) return;
+            if (themePopover.contains(e.target) || (themeToggle && themeToggle.contains(e.target))) return;
+            closeThemePopover();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeThemePopover();
+        });
 
         function openFileDialog() {
             try {
                 if (fileInput && typeof fileInput.showPicker === 'function') {
-                    console.log('showPicker()');
                     fileInput.showPicker();
                     return;
                 }
-                console.log('fileInput.click()');
                 fileInput.click();
             } catch (err) {
                 console.warn('File dialog open failed:', err);
@@ -1378,7 +1430,6 @@
 
         // Drag and drop handlers (document-level so drops work while browsing)
         dropZone.addEventListener('click', () => {
-            console.log('dropZone click -> file input');
             openFileDialog();
         });
 
@@ -1439,10 +1490,6 @@
                 return;
             }
 
-            if (window._bzip2Unavailable) {
-                console.warn('bzip2 library unavailable; continuing. BZ2-compressed entries (if any) will not decompress.');
-            }
-
             document.querySelector('.upload-section').style.display = 'none';
             infoSection.classList.remove('visible');
             loadingDiv.style.display = 'block';
@@ -1460,9 +1507,6 @@
                     }
                 }
                 const data = new Uint8Array(arrayBuffer);
-                
-                console.log('File size:', data.length);
-                console.log('First 20 bytes:', Array.from(data.slice(0, 20)).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' '));
 
                 if (isUnifi) {
                     const files = decryptAndExtractUnifi(data);
@@ -1474,9 +1518,7 @@
                 // Key and IV are NOT derived - they are static values
                 const key = CryptoJS.enc.Latin1.parse('bcyangkmluohmars'); // 16 bytes
                 const iv = CryptoJS.enc.Latin1.parse('ubntenterpriseap');  // 16 bytes
-                
-                console.log('Decrypting with static AES-128-CBC key and IV...');
-                
+
                 // Convert encrypted data to CryptoJS WordArray without Function.apply (avoids huge arg list stack overflow)
                 const ciphertext = uint8ArrayToWordArray(data);
                 
@@ -1492,18 +1534,12 @@
                 );
                 
                 let decryptedBytes = wordArrayToUint8Array(decrypted);
-                
-                console.log('Decrypted size:', decryptedBytes.length);
-                console.log('Decrypted first 20 bytes:', Array.from(decryptedBytes.slice(0, 20)).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' '));
-                console.log('Decrypted last 20 bytes:', Array.from(decryptedBytes.slice(-20)).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' '));
-                
+
                 // Check if this is a ZIP file (magic bytes: PK)
                 if (decryptedBytes[0] !== 0x50 || decryptedBytes[1] !== 0x4b) {
                     throw new Error('Decrypted data is not a ZIP file. Decryption may have failed.');
                 }
-                
-                console.log('SUCCESS: Found valid ZIP file!');
-                
+
                 // Find the actual ZIP end to handle any trailing padding
                 // ZIP files end with the End of Central Directory (EOCD) record
                 // which has magic bytes 0x50 0x4b 0x05 0x06
@@ -1517,20 +1553,16 @@
                         decryptedBytes[i] === 0x50 && decryptedBytes[i+1] === 0x4b && 
                         decryptedBytes[i+2] === 0x05 && decryptedBytes[i+3] === 0x06) {
                         
-                        console.log('Found EOCD at offset:', i);
                         foundEnd = true;
                         
                         // Read the comment length (bytes 20-21 of EOCD, little-endian)
                         const commentLength = decryptedBytes[i+20] | (decryptedBytes[i+21] << 8);
-                        console.log('Comment length:', commentLength);
                         
                         // EOCD record size is 22 + commentLength
                         const eocdEnd = i + 22 + commentLength;
-                        console.log('EOCD record ends at:', eocdEnd, 'Total file length:', decryptedBytes.length);
                         
                         // Trim any data after the EOCD
                         if (eocdEnd < decryptedBytes.length) {
-                            console.log('Trimming', decryptedBytes.length - eocdEnd, 'trailing bytes');
                             decryptedBytes = decryptedBytes.slice(0, eocdEnd);
                         }
                         break;
@@ -1540,11 +1572,9 @@
                 if (!foundEnd) {
                     console.warn('Could not find EOCD record - ZIP might be truncated');
                     // Try a more manual search - just look for the signature anywhere
-                    console.log('Attempting brute-force EOCD search...');
                     for (let i = decryptedBytes.length - 1; i >= 0; i--) {
                         if (decryptedBytes[i] === 0x50 && i + 3 < decryptedBytes.length &&
                             decryptedBytes[i+1] === 0x4b && decryptedBytes[i+2] === 0x05 && decryptedBytes[i+3] === 0x06) {
-                            console.log('Found EOCD signature at offset:', i);
                             
                             // Found EOCD - now search for the central directory
                             let cdOffset = -1;
@@ -1552,7 +1582,6 @@
                                 if (decryptedBytes[j] === 0x50 && decryptedBytes[j+1] === 0x4b && 
                                     decryptedBytes[j+2] === 0x01 && decryptedBytes[j+3] === 0x02) {
                                     cdOffset = j;
-                                    console.log('Found central directory at offset:', j);
                                     break;
                                 }
                             }
@@ -1560,20 +1589,17 @@
                             if (cdOffset >= 0) {
                                 // We found both CD and EOCD - fix the EOCD
                                 const cdSize = i - cdOffset;
-                                console.log('Central directory size:', cdSize);
                                 
                                 // Read the number of entries from EOCD before fixing
                                 let numEntries = 0;
                                 if (i + 9 < decryptedBytes.length) {
                                     numEntries = decryptedBytes[i+8] | (decryptedBytes[i+9] << 8);
                                 }
-                                console.log('Number of entries in EOCD:', numEntries);
                                 
                                 // Pad EOCD if incomplete
                                 let dataToUse = decryptedBytes;
                                 if (i + 21 >= decryptedBytes.length) {
                                     const missingBytes = 22 - (decryptedBytes.length - i);
-                                    console.log('EOCD is incomplete - padding with', missingBytes, 'bytes');
                                     const padding = new Uint8Array(missingBytes);
                                     const padded = new Uint8Array(decryptedBytes.length + missingBytes);
                                     padded.set(decryptedBytes, 0);
@@ -1592,14 +1618,12 @@
                                 dataToUse[i+14] = (cdSize >> 16) & 0xff;
                                 dataToUse[i+15] = (cdSize >> 24) & 0xff;
                                 
-                                console.log('EOCD corrected - CD offset:', cdOffset, 'CD size:', cdSize);
                                 decryptedBytes = dataToUse;
                                 foundEnd = true;
                             } else {
                                 // No central directory found - try padding anyway
                                 if (i + 21 >= decryptedBytes.length) {
                                     const missingBytes = 22 - (decryptedBytes.length - i);
-                                    console.log('EOCD is incomplete - padding with', missingBytes, 'bytes');
                                     const padding = new Uint8Array(missingBytes);
                                     const padded = new Uint8Array(decryptedBytes.length + missingBytes);
                                     padded.set(decryptedBytes, 0);
@@ -1612,9 +1636,7 @@
                         }
                     }
                 }
-                
-                console.log('Final data size for ZIP parsing:', decryptedBytes.length);
-                
+
                 // Parse the ZIP file
                 try {
                     let zip;
@@ -1622,17 +1644,14 @@
                         zip = await JSZip.loadAsync(decryptedBytes);
                     } catch (err) {
                         // If JSZip fails, try to work around common issues
-                        console.log('First parse attempt failed:', err.message);
                         
                         // Strategy 1: Remove trailing null bytes progressively
                         let trimmed = new Uint8Array(decryptedBytes);
                         let trimAttempt = 1;
                         while (trimmed.length > 1000 && trimmed[trimmed.length - 1] === 0x00) {
                             trimmed = trimmed.slice(0, -1);
-                            console.log('Attempt', trimAttempt, ': Removing null byte, new size:', trimmed.length);
                             try {
                                 zip = await JSZip.loadAsync(trimmed);
-                                console.log('SUCCESS with trimmed data!');
                                 break;
                             } catch (e) {
                                 trimAttempt++;
@@ -1641,7 +1660,6 @@
                         
                         // Strategy 2: Try to fix the EOCD central directory offset
                         if (!zip && decryptedBytes.length > 22) {
-                            console.log('Strategy 2: Searching for central directory and fixing EOCD...');
                             
                             let eocdOffset = -1;
                             let cdOffset = -1;
@@ -1651,7 +1669,6 @@
                                 if (decryptedBytes[i] === 0x50 && decryptedBytes[i+1] === 0x4b && 
                                     decryptedBytes[i+2] === 0x05 && decryptedBytes[i+3] === 0x06) {
                                     eocdOffset = i;
-                                    console.log('Found EOCD at offset:', i);
                                     break;
                                 }
                             }
@@ -1662,18 +1679,15 @@
                                     if (decryptedBytes[i] === 0x50 && decryptedBytes[i+1] === 0x4b && 
                                         decryptedBytes[i+2] === 0x01 && decryptedBytes[i+3] === 0x02) {
                                         cdOffset = i;
-                                        console.log('Found central directory at offset:', i);
                                         break;
                                     }
                                 }
                             }
                             
                             if (eocdOffset > 0 && cdOffset > 0) {
-                                console.log('Central directory found at:', cdOffset, 'EOCD at:', eocdOffset);
                                 
                                 // Calculate correct CD size
                                 const cdSize = eocdOffset - cdOffset;
-                                console.log('Calculated CD size:', cdSize);
                                 
                                 // Create a corrected copy with proper EOCD
                                 const fixed = new Uint8Array(decryptedBytes);
@@ -1683,7 +1697,6 @@
                                 if (eocdOffset + 9 < fixed.length) {
                                     numEntries = fixed[eocdOffset+8] | (fixed[eocdOffset+9] << 8);
                                 }
-                                console.log('Number of entries:', numEntries);
                                 
                                 // Fix the CD offset at bytes 16-19 of EOCD
                                 fixed[eocdOffset+16] = cdOffset & 0xff;
@@ -1696,42 +1709,32 @@
                                 fixed[eocdOffset+13] = (cdSize >> 8) & 0xff;
                                 fixed[eocdOffset+14] = (cdSize >> 16) & 0xff;
                                 fixed[eocdOffset+15] = (cdSize >> 24) & 0xff;
-                                
-                                console.log('Fixed EOCD - CD offset:', cdOffset, 'CD size:', cdSize);
-                                
+
                                 try {
                                     zip = await JSZip.loadAsync(fixed);
-                                    console.log('SUCCESS with corrected EOCD!');
                                     decryptedBytes = fixed;
                                 } catch (e) {
-                                    console.log('Failed with corrected EOCD:', e.message);
                                 }
                             }
                         }
                         
                         // Strategy 3: If still no zip, look for EOCD and extract clean ZIP
                         if (!zip) {
-                            console.log('Strategy 2 failed, trying EOCD extraction...');
-                            console.log('Searching for EOCD in range:', Math.max(0, decryptedBytes.length - 65557), 'to', decryptedBytes.length);
                             
                             for (let i = decryptedBytes.length - 22; i >= Math.max(0, decryptedBytes.length - 65557); i--) {
                                 if (i + 21 < decryptedBytes.length &&
                                     decryptedBytes[i] === 0x50 && decryptedBytes[i+1] === 0x4b && 
                                     decryptedBytes[i+2] === 0x05 && decryptedBytes[i+3] === 0x06) {
                                     
-                                    console.log('Found EOCD at offset:', i);
                                     const commentLength = decryptedBytes[i+20] | (decryptedBytes[i+21] << 8);
                                     const validZipEnd = i + 22 + commentLength;
-                                    console.log('Comment length:', commentLength, 'Valid ZIP end:', validZipEnd);
                                     
                                     const validZip = decryptedBytes.slice(0, Math.min(validZipEnd, decryptedBytes.length));
-                                    console.log('Extracting', validZip.length, 'bytes based on EOCD');
                                     try {
                                         zip = await JSZip.loadAsync(validZip);
-                                        console.log('SUCCESS with EOCD extraction!');
                                         break;
                                     } catch (e) {
-                                        console.log('EOCD extraction failed:', e.message);
+                                        console.warn('EOCD extraction failed:', e.message);
                                     }
                                     break;
                                 }
@@ -1739,20 +1742,16 @@
                             
                             // Strategy 4: If still no luck, try brute force search through entire file
                             if (!zip) {
-                                console.log('Strategy 3 failed, trying brute-force EOCD search through entire file...');
                                 for (let i = decryptedBytes.length - 1; i >= 0; i--) {
                                     if (decryptedBytes[i] === 0x50 && i + 3 < decryptedBytes.length &&
                                         decryptedBytes[i+1] === 0x4b && decryptedBytes[i+2] === 0x05 && decryptedBytes[i+3] === 0x06) {
-                                        
-                                        console.log('Found EOCD signature at offset:', i);
-                                        
+
                                         let zipToTry = decryptedBytes;
                                         
                                         if (i + 21 < decryptedBytes.length) {
                                             // EOCD is complete
                                             const commentLength = decryptedBytes[i+20] | (decryptedBytes[i+21] << 8);
                                             const eocdEnd = i + 22 + commentLength;
-                                            console.log('EOCD offset:', i, 'Comment length:', commentLength, 'Expected end:', eocdEnd);
                                             
                                             if (eocdEnd <= decryptedBytes.length) {
                                                 zipToTry = decryptedBytes.slice(0, eocdEnd);
@@ -1760,7 +1759,6 @@
                                         } else {
                                             // EOCD is incomplete - pad it
                                             const missingBytes = 22 - (decryptedBytes.length - i);
-                                            console.log('EOCD is incomplete - missing', missingBytes, 'bytes, padding...');
                                             const padding = new Uint8Array(missingBytes);
                                             const padded = new Uint8Array(decryptedBytes.length + missingBytes);
                                             padded.set(decryptedBytes, 0);
@@ -1768,13 +1766,11 @@
                                             zipToTry = padded;
                                         }
                                         
-                                        console.log('Trying ZIP with', zipToTry.length, 'bytes');
                                         try {
                                             zip = await JSZip.loadAsync(zipToTry);
-                                            console.log('SUCCESS with brute-force EOCD!');
                                             break;
                                         } catch (e) {
-                                            console.log('Failed:', e.message);
+                                            console.warn('Failed:', e.message);
                                         }
                                     }
                                 }
@@ -1787,12 +1783,8 @@
                     }
                     
                     const files = [];
-                    
-                    console.log('ZIP object has', Object.keys(zip.files).length, 'entries');
-                    console.log('Files in ZIP:', Object.keys(zip.files));
-                    
+
                     for (const [filename, zipEntry] of Object.entries(zip.files)) {
-                        console.log('Processing entry:', filename, 'isDir:', zipEntry.dir);
                         if (!zipEntry.dir) {
                             const content = await zipEntry.async('uint8array');
                             files.push({
@@ -1800,14 +1792,9 @@
                                 size: content.length,
                                 data: content
                             });
-                            console.log('Added file:', filename);
                         }
                     }
-                    
-                    console.log('After JSZip extraction, files.length:', files.length);
-                    console.log('Extracted files:', files.length);
-                    console.log('About to check fallback...');
-                    
+
                     if (files.length === 0) {
                         throw new Error('ZIP has no files');
                     }
@@ -1815,7 +1802,6 @@
                     // Fallback: if we only got 1 file but the backup should have more,
                     // try extracting by finding local file headers directly
                     if (files.length === 1) {
-                        console.log('Fallback triggered: Only found 1 file, searching for additional local file headers...');
                         const lfhSignature = [0x50, 0x4b, 0x03, 0x04]; // Local File Header
                         
                         // Find all LFH positions
@@ -1828,9 +1814,7 @@
                                 lfhPositions.push(i);
                             }
                         }
-                        
-                        console.log('Found', lfhPositions.length, 'local file headers');
-                        
+
                         // Try to extract each file from its LFH
                         for (let idx = 0; idx < lfhPositions.length; idx++) {
                             const lfhOffset = lfhPositions[idx];
@@ -1880,7 +1864,6 @@
                                             // Found descriptor signature
                                             dataEnd = i;
                                             foundDescriptor = true;
-                                            console.log('Found data descriptor for', fileName, 'at offset', i, '- data ends at', dataEnd);
                                             break;
                                         }
                                     }
@@ -1888,7 +1871,6 @@
                                     if (!foundDescriptor) {
                                         // No descriptor found, use nextLfhOffset (shouldn't happen if flags are correct)
                                         dataEnd = nextLfhOffset;
-                                        console.log('No descriptor found for', fileName, '- using nextLfhOffset:', dataEnd);
                                     }
                                 } else if (compressedSize > 0) {
                                     // Use compressed size if available
@@ -1905,17 +1887,14 @@
                                 
                                 // Log details for files with compression issues
                                 if (compressionMethod === 8) {
-                                    console.log('Extracting:', fileName, '| flags:0x' + flags.toString(16) + ' hasDD:' + ((flags & 0x08) !== 0) + ' method:' + compressionMethod + ' dataStart:' + dataStart + ' dataEnd:' + dataEnd + ' extractedSize:' + fileData.length + ' firstBytes:' + Array.from(fileData.slice(0, 6)).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' '));
                                 }
-                                
-                                
+
                                 // Decompress if the file is stored with DEFLATE compression (method 8)
                                 let finalData = fileData;
                                 
                                 if (compressionMethod === 8) {
                                     try {
                                         if (typeof pako === 'undefined') {
-                                            console.log('pako not available, keeping compressed:', fileName);
                                         } else {
                                             // Convert fileData to proper Uint8Array if needed
                                             const dataToInflate = fileData instanceof Uint8Array ? fileData : new Uint8Array(fileData);
@@ -1924,14 +1903,12 @@
                                             // Use inflateRaw for raw DEFLATE streams (no wrapper)
                                             try {
                                                 finalData = pako.inflateRaw(dataToInflate);
-                                                console.log('✓ Decompressed (raw DEFLATE):', fileName, '| from', dataToInflate.length, 'to', finalData.length, 'bytes');
                                             } catch (rawErr) {
-                                                console.log('✗ DEFLATE decompression failed for', fileName, ':', rawErr?.message || String(rawErr));
+                                                console.warn('✗ DEFLATE decompression failed for', fileName, ':', rawErr?.message || String(rawErr));
                                                 // Keep original data if decompression fails
                                             }
                                         }
                                     } catch (err) {
-                                        console.log('✗ Decompression error for', fileName, ':', err?.message || String(err));
                                         // Keep original compressed data if decompression fails
                                     }
                                 }
@@ -1946,11 +1923,10 @@
                                         originalCompressedSize: compressionMethod === 8 ? fileData.length : finalData.length
                                     });
                                     if (fileName.endsWith('.gz') || compressionMethod === 8) {
-                                        console.log('Extracted file:', fileName, 'compression method:', compressionMethod, 'final size:', finalData.length);
                                     }
                                 }
                             } catch (e) {
-                                console.log('Failed to extract file at offset', lfhOffset, ':', e.message);
+                                console.warn('Failed to extract file at offset', lfhOffset, ':', e.message);
                             }
                         }
                     }
@@ -2012,7 +1988,6 @@
                 cipherBytes = cipherBytes.slice(0, cipherBytes.length - rem);
             }
 
-            console.log('Decrypting .unifi with static AES-256-CBC key and file IV...');
             const iv = uint8ArrayToWordArray(ivBytes);
             const ciphertext = uint8ArrayToWordArray(cipherBytes);
             const decrypted = CryptoJS.AES.decrypt(
@@ -2026,9 +2001,6 @@
             );
             const decryptedBytes = wordArrayToUint8Array(decrypted);
 
-            console.log('Decrypted size:', decryptedBytes.length);
-            console.log('Decrypted first 20 bytes:', Array.from(decryptedBytes.slice(0, 20)).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' '));
-
             if (decryptedBytes.length < 2 || decryptedBytes[0] !== 0x1f || decryptedBytes[1] !== 0x8b) {
                 throw new Error('Decrypted .unifi data is not gzip. Decryption may have failed.');
             }
@@ -2039,12 +2011,10 @@
 
             // Gunzip may need to strip up to one AES block of trailing NoPadding bytes.
             const tarBytes = gunzipIgnoreTrailingPadding(decryptedBytes);
-            console.log('SUCCESS: gunzipped .unifi payload, tar size:', tarBytes.length);
             const files = parseTar(tarBytes);
             if (files.length === 0) {
                 throw new Error('TAR archive is empty after decrypting .unifi');
             }
-                    console.log('Extracted', files.length, 'files from tar');
             setDecryptedArchive(tarBytes, {
                 extension: 'tar',
                 mime: 'application/x-tar',
@@ -2058,12 +2028,10 @@
             let databases = {};
 
             for (const f of files) {
-                console.log('File:', f.name, 'size:', f.size, 'bytes, first 20 bytes:', f.size > 0 ? Array.from(f.data.slice(0, Math.min(20, f.size))).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' ') : '(empty)');
 
                 if (f.name.includes('backup_info') || f.name.includes('version') || f.name.endsWith('metadata.json')) {
                     try {
                         const text = new TextDecoder().decode(f.data);
-                        console.log('Metadata content:', text.slice(0, 200));
                         backupInfo = text;
                     } catch (e) { }
                 }
@@ -2091,15 +2059,13 @@
                                     isDecompressed: true
                                 });
 
-                                console.log('Decompressed:', f.name, '->', baseName, 'size:', decompressed.length);
                             } catch (decompressErr) {
-                                console.log('Failed to decompress', f.name, ':', decompressErr?.message);
+                                console.warn('Failed to decompress', f.name, ':', decompressErr?.message);
                             }
                         } else {
-                            console.log(f.name, 'is extracted and has no additional gzip header');
                         }
                     } catch (e) {
-                        console.log('Error processing', f.name, ':', e?.message);
+                        console.warn('Error processing', f.name, ':', e?.message);
                     }
                 }
             }
@@ -2128,40 +2094,6 @@
                 );
             }
             return CryptoJS.lib.WordArray.create(words, u8Array.length);
-        }
-
-        function evpBytesToKey(password, salt, keyLen, ivLen = 0) {
-            // OpenSSL EVP_BytesToKey equivalent using MD5
-            const m = [];
-            let i = 0;
-            
-            while (m.length < (keyLen + ivLen)) {
-                let hashInput = '';
-                if (m.length === 0) {
-                    hashInput = password;
-                } else {
-                    const hex = m[m.length - 1].toString();
-                    const bytes = [];
-                    for (let j = 0; j < hex.length; j += 2) {
-                        bytes.push(String.fromCharCode(parseInt(hex.substr(j, 2), 16)));
-                    }
-                    hashInput = bytes.join('') + password;
-                }
-                hashInput += String.fromCharCode.apply(null, salt);
-                
-                const h = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(hashInput));
-                m.push(h.toString(CryptoJS.enc.Hex));
-                i++;
-            }
-            
-            const ms = m.join('');
-            const result = new Uint8Array(keyLen + ivLen);
-            
-            for (let i = 0; i < keyLen + ivLen; i++) {
-                result[i] = parseInt(ms.substr(i * 2, 2), 16);
-            }
-            
-            return result.slice(0, keyLen + ivLen);
         }
 
         function parseTar(data) {
@@ -2265,45 +2197,75 @@
                 </div>
             `;
 
-            dataSection.innerHTML = '<h3>Backup Contents</h3>';
-            
-            let tableHTML = `
-                <table class="collection-table">
-                    <thead>
-                        <tr>
-                            <th>File Name</th>
-                            <th>Size</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            files.forEach(f => {
-                const sizeKB = (f.size / 1024).toFixed(2);
-                const isDecompressed = f.isDecompressed || f.name.includes('(decompressed)');
-                
-                // Skip decompressed entries in GUI display (they're shown when you click the .gz file)
-                if (isDecompressed) return;
-
-                const { label: badgeText, className: badgeClass } = getFileTypeBadge(f.name);
-                
-                tableHTML += `
-                    <tr onclick='showFileContent(${JSON.stringify(f.name)})'>
-                        <td>${escapeHtml(f.name)}</td>
-                        <td>${sizeKB} KB</td>
-                        <td><span class="badge ${badgeClass}">${escapeHtml(badgeText)}</span></td>
-                    </tr>
-                `;
-            });
-            
-            tableHTML += '</tbody></table>';
-            dataSection.innerHTML += tableHTML;
-
+            const visibleFiles = files.filter(f => !(f.isDecompressed || f.name.includes('(decompressed)')));
             window.backupFiles = files;
-            
+
+            dataSection.innerHTML = '';
+            const contentsHeading = document.createElement('h3');
+            contentsHeading.textContent = 'Backup Contents';
+            dataSection.appendChild(contentsHeading);
+
+            const filterInput = document.createElement('input');
+            filterInput.type = 'search';
+            filterInput.className = 'bson-filter file-filter';
+            filterInput.placeholder = 'Filter files…';
+            filterInput.setAttribute('aria-label', 'Filter backup files');
+            dataSection.appendChild(filterInput);
+
+            const table = document.createElement('table');
+            table.className = 'collection-table';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            `;
+            const tbody = table.querySelector('tbody');
+            dataSection.appendChild(table);
+
+            const renderRows = () => {
+                const query = (filterInput.value || '').trim().toLowerCase();
+                tbody.innerHTML = '';
+                visibleFiles.forEach(f => {
+                    if (query && !f.name.toLowerCase().includes(query)) return;
+                    const { label: badgeText, className: badgeClass } = getFileTypeBadge(f.name);
+                    const tr = document.createElement('tr');
+                    tr.tabIndex = 0;
+                    tr.setAttribute('role', 'button');
+                    tr.dataset.fileName = f.name;
+                    tr.innerHTML = `
+                        <td>${escapeHtml(f.name)}</td>
+                        <td>${(f.size / 1024).toFixed(2)} KB</td>
+                        <td><span class="badge ${badgeClass}">${escapeHtml(badgeText)}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            };
+
+            tbody.addEventListener('click', (e) => {
+                const tr = e.target.closest('tr[data-file-name]');
+                if (tr) showFileContent(tr.dataset.fileName);
+            });
+            tbody.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                const tr = e.target.closest('tr[data-file-name]');
+                if (tr) {
+                    e.preventDefault();
+                    showFileContent(tr.dataset.fileName);
+                }
+            });
+            filterInput.addEventListener('input', renderRows);
+            renderRows();
+
             if (Object.keys(databases).length > 0) {
-                dataSection.innerHTML += '<p class="tip">Tip: Click a <code>db.gz</code> or <code>.bson</code> file to browse MongoDB collections in the browser.</p>';
+                const tip = document.createElement('p');
+                tip.className = 'tip';
+                tip.innerHTML = 'Tip: Click a <code>db.gz</code> or <code>.bson</code> file to browse MongoDB collections in the browser.';
+                dataSection.appendChild(tip);
             }
         }
 
@@ -2545,15 +2507,23 @@
                 }
             });
 
-            const close = () => modal.remove();
+            const close = () => {
+                modal.remove();
+                document.removeEventListener('keydown', onKeydown);
+            };
+            const onKeydown = (e) => {
+                if (e.key === 'Escape') close();
+            };
             closeBtn.addEventListener('click', close);
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) close();
             });
 
+            document.addEventListener('keydown', onKeydown);
             document.body.appendChild(modal);
             renderList();
             renderDocs();
+            if (filterInput) filterInput.focus();
             return true;
         }
 
@@ -2562,7 +2532,7 @@
                 const dump = parseBsonDump(bytes);
                 return showBsonBrowser(fileName, dump);
             } catch (e) {
-                console.log('BSON parse failed for', fileName, ':', e.message);
+                console.warn('BSON parse failed for', fileName, ':', e.message);
                 return false;
             }
         }
@@ -2641,7 +2611,7 @@
                     }
                 } catch (e) {
                     // If gzip decompression fails, show hex dump
-                    console.log('Failed to decompress gzip file:', e);
+                    console.warn('Failed to decompress gzip file:', e);
                     content = generateHexDump(fileBytes);
                     displayType = 'hex';
                 }
@@ -2698,13 +2668,23 @@
                             <div class="modal-panel" style="text-align: center;">
                                 <h2>${escapeHtml(fileName)}</h2>
                                 <img src="${url}" alt="${escapeHtml(fileName)}">
-                                <button class="reset-btn" onclick="this.closest('.modal-overlay').remove()">Close</button>
+                                <button class="reset-btn" type="button">Close</button>
                             </div>
                         `;
-                        document.body.appendChild(modal);
+                        const closeImageModal = () => {
+                            modal.remove();
+                            URL.revokeObjectURL(url);
+                            document.removeEventListener('keydown', onImageKeydown);
+                        };
+                        const onImageKeydown = (e) => {
+                            if (e.key === 'Escape') closeImageModal();
+                        };
+                        modal.querySelector('.reset-btn').addEventListener('click', closeImageModal);
                         modal.addEventListener('click', (e) => {
-                            if (e.target === modal) modal.remove();
+                            if (e.target === modal) closeImageModal();
                         });
+                        document.addEventListener('keydown', onImageKeydown);
+                        document.body.appendChild(modal);
                         return;
                     } else {
                         // Show hex dump for unknown binary files
@@ -2731,27 +2711,46 @@
                 <div class="modal-panel">
                     <h2>${escapeHtml(fileName)}${metaHtml}</h2>
                     <div class="json-viewer"><pre>${renderedContent}</pre></div>
-                    <button class="reset-btn" onclick="this.closest('.modal-overlay').remove()">Close</button>
+                    <div class="modal-actions">
+                        <button class="reset-btn btn-secondary" type="button" data-action="download">${ICON_DOWNLOAD}Download File</button>
+                        <button class="reset-btn" type="button" data-action="close">Close</button>
+                    </div>
                 </div>
             `;
-            document.body.appendChild(modal);
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.remove();
+
+            const previouslyFocused = document.activeElement;
+            const closePreview = () => {
+                modal.remove();
+                document.removeEventListener('keydown', onKeydown);
+                if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+            };
+            const onKeydown = (e) => {
+                if (e.key === 'Escape') closePreview();
+            };
+
+            modal.querySelector('[data-action="close"]').addEventListener('click', closePreview);
+            modal.querySelector('[data-action="download"]').addEventListener('click', () => {
+                const displayName = normalizePreviewFileName(fileName, displayType);
+                downloadBlob(fileBytes, displayName || 'file', 'application/octet-stream');
             });
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closePreview();
+            });
+            document.addEventListener('keydown', onKeydown);
+            document.body.appendChild(modal);
+            const closeBtn = modal.querySelector('[data-action="close"]');
+            if (closeBtn) closeBtn.focus();
         }
 
         function showError(message) {
             loadingDiv.style.display = 'none';
             document.querySelector('.upload-section').style.display = 'none';
             infoSection.classList.add('visible');
-            const extra = window._bzip2Unavailable
-                ? '<div class="error-detail">bzip2 library did not load; bz2 entries (if any) cannot be decompressed.</div>'
-                : '';
             if (infoGrid) {
                 infoGrid.innerHTML = '';
-                dataSection.innerHTML = `<div class="error">${message}${extra}</div><button class="reset-btn" onclick="reset()">Try Again</button>`;
+                dataSection.innerHTML = `<div class="error">${message}</div><button class="reset-btn" onclick="reset()">Try Again</button>`;
             } else {
-                infoSection.innerHTML = `<div class="error">${message}${extra}</div><button class="reset-btn" onclick="reset()">Try Again</button>`;
+                infoSection.innerHTML = `<div class="error">${message}</div><button class="reset-btn" onclick="reset()">Try Again</button>`;
             }
         }
 
@@ -2800,10 +2799,8 @@
                 return true;
             });
             
-            console.log('reconstructZip: Total files:', files.length, 'Valid files:', validFiles.length);
             validFiles.forEach(f => {
                 const dataLen = f.data ? (f.data.length || f.data.byteLength || 0) : 0;
-                console.log('  - File:', f.name, 'data length:', dataLen, 'isUint8Array:', f.data instanceof Uint8Array);
             });
             
             const encoder = new TextEncoder();
@@ -2829,9 +2826,7 @@
                     console.warn('Skipping file with no data:', file.name);
                     return;
                 }
-                
-                console.log('Processing file:', file.name, 'size:', fileData.length);
-                
+
                 // Local file header
                 let fileName = file.name;
                 
@@ -2992,11 +2987,9 @@
 
             // Create final ZIP file
             const totalSize = zipData.reduce((sum, part) => sum + part.length, 0);
-            console.log('Total ZIP size:', totalSize, 'parts:', zipData.length);
             const finalZip = new Uint8Array(totalSize);
             let finalPos = 0;
             zipData.forEach((part, idx) => {
-                console.log('  Setting part', idx, 'at position', finalPos, 'length', part.length, 'remaining space', totalSize - finalPos);
                 if (finalPos + part.length > totalSize) {
                     console.error('ERROR: Part would exceed buffer! finalPos:', finalPos, 'part.length:', part.length, 'totalSize:', totalSize);
                     return;

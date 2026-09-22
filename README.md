@@ -14,9 +14,9 @@ A pure **clientside JavaScript** tool to decrypt and explore UniFi backup files 
 | --- | --- |
 | ![Properties preview](docs/screenshots/04-properties-preview-dark.png) | ![UniFi OS contents](docs/screenshots/08-unifi-os-contents-dark.png) |
 
-| Light theme | BSON browser (light) |
+| Second theme | BSON browser (alt theme) |
 | --- | --- |
-| ![Light theme contents](docs/screenshots/05-backup-contents-light.png) | ![BSON browser light](docs/screenshots/06-bson-browser-light.png) |
+| ![Alt theme contents](docs/screenshots/05-backup-contents-light.png) | ![BSON browser alt](docs/screenshots/06-bson-browser-light.png) |
 
 ## Features
 
@@ -27,7 +27,7 @@ A pure **clientside JavaScript** tool to decrypt and explore UniFi backup files 
 ✅ **BSON collection browser** - Browse MongoDB dump collections and documents in-browser  
 ✅ **Syntax highlighting** - Colorized JSON and `.properties` file previews  
 ✅ **Drag and drop** - Drop `.unf` / `.unifi` files onto the page (full-page overlay)  
-✅ **Theme toggle** - Light and dark modes (preference saved in `localStorage`)  
+✅ **Paper-matte themes** - Seven paper-matte variations (Paper, Parchment, Cream, Ivory, Kraft, Charcoal, Night) with the preference saved in `localStorage`  
 ✅ **Session restore** - Last opened backup is cached in IndexedDB and restored on reload  
 ✅ **Metadata display** - Backup type, size, date, and file count  
 ✅ **File preview** - View text, JSON, images, properties, and BSON data  
@@ -103,7 +103,9 @@ Typically contain under `backup/`:
 4. Browse files and click to preview contents
 5. For `db.gz` / `.bson` dumps, use the collection browser (sidebar + document viewer)
 6. Click the download button to export all decrypted and decompressed files as a ZIP
-7. Use the theme toggle (top-right) to switch light/dark mode
+7. Use the theme picker (top-right) to switch between paper-matte theme variations
+
+Previews open in modals: press **Escape** or click the backdrop to close, and use **Download File** to export an individual file. The backup file list has a search filter, and rows are keyboard-focusable (Enter/Space opens).
 
 On reload, the last opened backup is restored from IndexedDB when available. Use **Upload Another File** to clear the current session.
 
@@ -155,7 +157,6 @@ dd if=backup.unifi bs=1 skip=16 2>/dev/null | openssl enc -d -aes-256-cbc \
 - **JSZip 3.10.1** - ZIP file parsing and extraction (`.unf`)
 - **pako 2.1.0** - DEFLATE and gzip decompression
 - **BSON 7.0.0** - BSON to JSON conversion
-- **js-bzip2 1.3.8** - Bzip2 decompression support
 
 ## Privacy & Security
 
